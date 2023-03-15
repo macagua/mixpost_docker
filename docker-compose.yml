@@ -4,7 +4,7 @@ services:
     mixpost:
         image: "${MIXPOST_RELEASE_NAME}:${MIXPOST_RELEASE_VERSION}"
         environment:
-            APP_NAME: ${MIXPOST_APP_NAME} #don't use the name with spaces (temporary issue)
+            APP_NAME: ${MIXPOST_APP_NAME}
             APP_URL: ${MIXPOST_APP_URL}
             DB_DATABASE: ${MIXPOST_DB_DATABASE}
             DB_USERNAME: ${MIXPOST_DB_USERNAME}
