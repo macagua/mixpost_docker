@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+    mixpost:
+        image: "${MIXPOST_RELEASE_NAME}:${MIXPOST_RELEASE_VERSION}"
+        environment:
+            APP_NAME: ${MIXPOST_APP_NAME} #don't use the name with spaces (temporary issue)
+            APP_URL: ${MIXPOST_APP_URL}
+            DB_DATABASE: ${MIXPOST_DB_DATABASE}
+            DB_USERNAME: ${MIXPOST_DB_USERNAME}
+            DB_PASSWORD: ${MIXPOST_DB_PASSWORD}
+            REDIS_PASSWORD: ${MIXPOST_REDIS_PASSWORD}
+        ports:
+            - ${MIXPOST_APP_PORT}:80
+        volumes:
+            - mixpost-storage:/var/www/html/storage/app
+            - mixpost-logs:/var/www/html/storage/logs
+        depends_on:
+            - mysql
+            - redis
+    mysql:
+        image: "${MYSQL_RELEASE_NAME}:${MYSQL_RELEASE_VERSION}"
+        ports:
+            - '${MYSQL_APP_PORT}:3306'
+        environment:
+            MYSQL_DATABASE: ${MIXPOST_DB_DATABASE}
+            MYSQL_USER: ${MIXPOST_DB_USERNAME}
+            MYSQL_PASSWORD: ${MIXPOST_DB_PASSWORD}
+        volumes:
+            - 'mixpost-mysql:/var/lib/mysql'
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p ${MIXPOST_DB_PASSWORD}"]
+            retries: 3
+            timeout: 5s
+    redis:
+        image: "${REDIS_RELEASE_NAME}:${REDIS_RELEASE_VERSION}"
+        command: redis-server --appendonly yes --replica-read-only no --requirepass "${MIXPOST_REDIS_PASSWORD}"
+        ports:
+            - '${REDIS_APP_PORT}:6379'
+        volumes:
+            - 'mixpost-redis:/data'
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
+volumes:
+    mixpost-mysql:
+        driver: local
+    mixpost-redis:
+        driver: local
+    mixpost-storage:
+        driver: local
+    mixpost-logs:
+        driver: local
