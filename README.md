@@ -17,7 +17,7 @@ Checkout the meaning for the environments variables:
 
 * ``MIXPOST_DB_DATABASE``, Mixpost db name, like ``mixpost``.
 
-* ``MIXPOST_DB_USERNAME``, Mixpost user name.
+* ``MIXPOST_DB_USERNAME``, Mixpost user name, don't use the name with spaces (temporary issue).
 
 * ``MIXPOST_DB_PASSWORD``, Mixpost user password.
 
